@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"
+  integrity="sha512-jGsMH83oKe9asCpkOVkBnUrDDTp8wl+adkB2D+//JtlxO4SrLoJdhbOysIFQJloQFD+C4Fl1rMsQZF76JjV0eQ=="
+  crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <title>IKEA</title>
+  <link rel="stylesheet" href="./CSS/style.css">
+  <link rel="stylesheet" href="./CSS/rwd.css">
+  <link rel="stylesheet" href="./CSS/fonts.css">
+</head>
+
+<body>
+  <div class="header"></div>
+
+  <section id="section">
+    <div class="header_grid" id="cart_container">
+      <!-- <div id="cart_status">
+        <h1>장바구니가 비어있습니다.</h1>
+      </div>
+
+      <div id="cart_contents">
+        <div id="cart_login">
+          <h2>로그인</h2>
+          <p><a href="./login.html">로그인 또는 회원가입</a>하면 더 편리하게 이용하실 수 있어요.</p>
+        </div>
+      </div>
+
+      <div id="cart_left">
+        <h1>장바구니</h1>
+        <div class="cart_one_prd">
+          <div><img src="./Images/Prd/BRUNSTA 브룬스타.avif" alt="제품명"></div>
+          <div>
+            <ul>
+              <li>제품명</li>
+              <li>인포</li>
+              <li>색상</li>
+              <li>가격</li>
+            </ul>
+            <div id="cart_qty">
+              <div id="cart_qty_form">
+                <button type="button" class="qty__minus">-</button>
+                <input type="text" value="1">
+                <button type="button" class="qty__plus">+</button>
+              </div>
+              <div><i class="fa-solid fa-won-sign" style="font-size: 14px;"></i> 가격</div>
+              <div><button type="button">삭제</button></div>
+          </div>
+          </div>
+        </div>
+      </div>
+      <div id="cart_right">
+        <h2>주문내역</h2>
+        <div class="order_prd">
+          <span>제품명, 색상</span>
+          <span>금액</span>
+        </div>
+        <div>
+          <p>총 주문금액</p>
+          <p>금액</p>
+        </div>
+        <div><button type="submit">결제하기</button></div>
+      </div> -->
+    </div>
+  </section>
+
+  <script src="./JS/common.js"></script>
+
+  <script>
+    let cartList = JSON.parse(localStorage.getItem("allItem"))
+    let prd_list = ''
+    console.log(cartList)
+    
+    function listing(){
+      if (cartList.length) {
+        let all = 0
+        prd_list += '<div id="cart_left"><h1>장바구니</h1>'
+        cartList.forEach(value => {
+          console.log(value)
+          all += parseInt(value.qty) * parseInt(value.price)
+          let total = (parseInt(value.qty) * parseInt(value.price)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+          prd_list += `
+          <div class="cart_one_prd">
+          <div><img src="./Images/Prd/${value.name}${value.color}.webp" alt="${value.name}_${value.color}"></div>
+          <div style="width: auto">
+            <ul>
+              <li class="name">${value.name}</li>
+              <li>${value.info}</li>
+              <li class="color">${value.color}</li>
+              <li class="prd_price">${(value.price).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}원</li>
+            </ul>
+            <div id="cart_qty">
+              <div id="cart_qty_form">
+                <button type="button" class="qty__minus">-</button>
+                <input type="text" value="${value.qty}">
+                <button type="button" class="qty__plus">+</button>
+              </div>
+              <div>합계: 
+                <i class="fa-solid fa-won-sign" style="font-size: 12px;"></i>
+                <span class="prd_total">${total}</span>
+                <button style="margin-left: 15px" type="button" class="delete_button"><i class="fa-solid fa-x"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>`
+        })
+        prd_list += `</div><div id="cart_right">
+        
+      </div>`
+      } else {
+        prd_list += 
+        `<div id="cart_status">
+        <h1>장바구니가 비어있습니다.</h1>
+      </div>
+
+      <div id="cart_contents">
+        <div id="cart_login">
+          <h2>로그인</h2>
+          <p><a href="./login.html">로그인 또는 회원가입</a>하면 더 편리하게 이용하실 수 있어요.</p>
+        </div>
+      </div>`
+      }
+
+      $('#cart_container').empty()
+      $('#cart_container').append(prd_list)
+      prd_list = ''
+    }
+    listing()
+
+    function order_list() {
+      let ord_total = 0
+      let ord_list = ''
+
+      console.log(cartList)
+      if (cartList.length) {
+        ord_list += `<h2>주문내역</h2>`
+        cartList.forEach(value => {
+          console.log(value)
+          ord_list += `
+          <div class="order_prd">
+          <span>${value.name}, ${value.color}, ${value.qty}개</span>
+          <span><i class="fa-solid fa-won-sign" style="font-size: 12px;"></i> ${(parseInt(value.qty) * parseInt(value.price)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</span>
+          </div>`
+          ord_total += (parseInt(value.qty) * parseInt(value.price))
+        })
+        ord_list += `<div class="cart_space"></div><div class="total_container">
+          <span>총 주문금액</span>
+          <span><i class="fa-solid fa-won-sign" style="font-size: 12px;"></i> ${ord_total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</span>
+        </div>
+        <div><button type="submit" class="buy">결제하기</button></div>`
+
+        $('#cart_right').empty()
+        $('#cart_right').append(ord_list)
+        ord_list = ''
+      }
+    }
+    order_list()
+    
+    function pushLocal(data) {
+      localStorage.setItem("allItem", JSON.stringify(data))
+    }
+
+  </script>
+
+  <script>
+  $('body').on('click','.qty__minus', function(){
+    let name = $(this).parent().parent().prev().find(".name").text()
+    let color = $(this).parent().parent().prev().find(".color").text()
+    // console.log(name)
+    // console.log(color)
+    let quantity = $(this).next().val()
+    if(quantity > 1){
+      quantity = parseInt(quantity)
+      $(this).next().val(--quantity)
+    }
+    cartList.forEach(element => {
+      if(element.name == name && element.color == color) {
+        element.qty = quantity
+        return false
+      }
+    })
+    pushLocal(cartList)
+    let total = parseInt($(this).parent().parent().prev().children('.prd_price').text().replace(/[^0-9]/g, "")) * quantity
+    total = total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+    // console.log(total)
+    // console.log($(this).parent().next().find('.prd_total').text())
+    $(this).parent().next().find('.prd_total').text(total)
+    order_list()
+  })
+
+  $('body').on('click','.qty__plus', function(){
+    // console.log('1')
+    let name = $(this).parent().parent().prev().find(".name").text()
+    let color = $(this).parent().parent().prev().find(".color").text()
+    let quantity = $(this).prev().val()
+    if(quantity){
+      quantity = parseInt(quantity)
+      $(this).prev().val(++quantity)
+    }
+    cartList.forEach(element => {
+      if(element.name == name && element.color == color) {
+        element.qty = quantity
+        return false
+      }
+    })
+    pushLocal(cartList)
+    let total = parseInt($(this).parent().parent().prev().children('.prd_price').text().replace(/[^0-9]/g, "")) * quantity
+    total = total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+    $(this).parent().next().find('.prd_total').text(total)
+    console.log(cartList)
+    order_list()
+  })
+
+  $('body').on('click', '.delete_button', function(){
+    let name = $(this).parent().parent().prev().find(".name").text()
+    let color = $(this).parent().parent().prev().find(".color").text()
+    let now = 0
+    let where = ''
+    cartList.forEach(element => {
+      if(element.name == name && element.color == color) {
+        where = now
+        console.log(where)
+        console.log(element.name)
+        return false
+      }
+      now ++
+    })
+    cartList.splice(where, 1)
+    pushLocal(cartList)
+    listing()
+    order_list()
+  })
+
+  $('body').on('click', '.buy', function(){
+    localStorage.clear()
+    cartList = []
+    listing()
+    order_list()
+  })
+</script>
+  
+</body>
+
+</html>
